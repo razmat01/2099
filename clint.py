@@ -6,7 +6,7 @@ class MyClient(ConnectionListener):
         self.Connect((host, port))
         print(f"Trying to connect to {host}:{port}")
 
-    def Network_connected(self, data):
+    def Network_connected(self):
         print("Connected to the server")
     
     def Network(self, data):
@@ -22,17 +22,17 @@ class MyClient(ConnectionListener):
     def sendInput(self):
         # Prompt the user for input
         message = input("Enter your message: ")
-        connection.send({"action":"message","content": message})
+
         self.sendData({"action":"message","content": message})
 
 
 myclient = MyClient("localhost", 25565)
 while True:
     
-    myclient.Pump()
-    connection.Pump()
-    print("gimp")
-    myclient.sendData({"action":"message","content":"hello"})
-    #myclient.sendInput()
+    
+
+    myclient.sendInput()
    
+    myclient.Pump()
+    connection.Pump() #THIS ONE NECESSARY.
     pygame.time.wait(50)  # wait for 50 milliseconds

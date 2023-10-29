@@ -10,7 +10,7 @@ class ClientChannel(Channel):
         #print("Received data from client:", data)
         # Print the message received from the client
         
-        print("Client message:", data['content'], flush=True)
+        print("Client message:", data['content'])
     
 
 class MyServer(Server):
@@ -26,6 +26,8 @@ myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
 while True:
+
+
 
     myserver.Pump()
     pygame.time.wait(50)
