@@ -22,7 +22,7 @@ class MyClient(ConnectionListener):
 
 myclient = MyClient("localhost", 1337)
 while True:
-    myclient.SendData({"message":"hello"})
+    myclient.sendData({"message":"hello"})
 
     myclient.Pump()
 
