@@ -22,7 +22,7 @@ class MyClient(ConnectionListener):
     def sendInput(self):
         # Prompt the user for input
         message = input("Enter your message: ")
-        self.sendData({"message": message})
+        self.sendData({"action":"message","content": message})
 
 
 myclient = MyClient("60.242.224.77", 25565)
