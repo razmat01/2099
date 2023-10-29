@@ -9,6 +9,11 @@ class MyClient(ConnectionListener):
     def Network_connected(self, data):
         print("Connected to the server")
     
+    def sendInput(self):
+        # Prompt the user for input
+        message = input("Enter your message: ")
+        self.sendData({"message": message})
+    
     def Network(self, data):
         # Handle incoming data from the server here
         pass
@@ -22,12 +27,10 @@ class MyClient(ConnectionListener):
 
 myclient = MyClient("localhost", 1337)
 while True:
-    myclient.sendData({"message":"hello"})
+    # Send the user's input to the server
+    myclient.sendInput()
 
     myclient.Pump()
 
-    # ... rest of your game loop logic ...
-
     # Optionally, you can add a small delay to not overload the server
-    # Especially important if you're sending data every loop iteration
     pygame.time.wait(50)  # wait for 50 milliseconds

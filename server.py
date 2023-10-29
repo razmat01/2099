@@ -6,7 +6,9 @@ import os
 class ClientChannel(Channel):
     def Network(self, data):
         print("Received data from client:", data)
-        # Handle the data further if necessary
+        # Print the message received from the client
+        if 'message' in data:
+            print("Client message:", data['message'])
 
 
 class MyServer(Server):
