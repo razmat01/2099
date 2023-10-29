@@ -13,7 +13,8 @@ class MyClient(ConnectionListener):
         # Handle incoming data from the server here
         pass
 
-
+    def sendData(self,message):
+        self.Send(message)
 
     def SendMove(self, direction):
         self.Send({"action": "move", "direction": direction})
