@@ -7,8 +7,8 @@ class ClientChannel(Channel):
     def Network_message(self, data):
         print("Received data from client:", data)
         # Print the message received from the client
-        if 'message' in data:
-            print("Client message:", data['message'])
+        if 'content' in data:
+            print("Client message:", data['content'])
 
     def Network(self,data):
         print("recieved data")

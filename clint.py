@@ -25,9 +25,10 @@ class MyClient(ConnectionListener):
         self.sendData({"action":"message","content": message})
 
 
-myclient = MyClient("60.242.224.77", 25565)
+myclient = MyClient("localhost", 25565)
 while True:
-    myclient.sendData({"message":"hello"})
+    print("gimp")
+    #myclient.sendData({"message":"hello"})
     myclient.sendInput()
     myclient.Pump()
 
