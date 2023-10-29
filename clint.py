@@ -20,13 +20,9 @@ class MyClient(ConnectionListener):
 
 
 myclient = MyClient("localhost", 1337)
+while True:
+    myclient.SendData({"message":"hello"})
 
-running = True
-while running:
-
-    myclient.SendMove("left")
-
-    # Pump the client to process messages
     myclient.Pump()
 
     # ... rest of your game loop logic ...
