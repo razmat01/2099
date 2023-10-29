@@ -20,7 +20,7 @@ class MyClient(ConnectionListener):
         self.Send({"action": "move", "direction": direction})
 
 
-myclient = MyClient("localhost", 25565)
+myclient = MyClient("localhost", 1337)
 while True:
     myclient.sendData({"message":"hello"})
 
