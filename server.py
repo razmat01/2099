@@ -5,13 +5,9 @@ import os
 
 class ClientChannel(Channel):
     def Network(self, data):
-        # Handle incoming data from a client here
-        def Network(self, data):
-            if data["action"] == "move":
-                print("hello")
-        # Handle the move action here
+        print("Received data from client:", data)
+        # Handle the data further if necessary
 
-        pass
 
 class MyServer(Server):
     channelClass = ClientChannel
