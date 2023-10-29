@@ -19,11 +19,16 @@ class MyClient(ConnectionListener):
     def SendMove(self, direction):
         self.Send({"action": "move", "direction": direction})
 
+    def sendInput(self):
+        # Prompt the user for input
+        message = input("Enter your message: ")
+        self.sendData({"message": message})
+
 
 myclient = MyClient("60.242.224.77", 25565)
 while True:
     myclient.sendData({"message":"hello"})
-
+    myclient.sendInput()
     myclient.Pump()
 
     # ... rest of your game loop logic ...
