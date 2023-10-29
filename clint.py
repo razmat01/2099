@@ -1,4 +1,4 @@
-from PodSixNet.Connection import ConnectionListener
+from PodSixNet.Connection import ConnectionListener,connection
 import pygame
 #asdasd
 class MyClient(ConnectionListener):
@@ -22,18 +22,17 @@ class MyClient(ConnectionListener):
     def sendInput(self):
         # Prompt the user for input
         message = input("Enter your message: ")
+        connection.send({"action":"message","content": message})
         self.sendData({"action":"message","content": message})
 
 
 myclient = MyClient("localhost", 25565)
 while True:
-    print("gimp")
-    #myclient.sendData({"message":"hello"})
-    myclient.sendInput()
+    
     myclient.Pump()
-
-    # ... rest of your game loop logic ...
-
-    # Optionally, you can add a small delay to not overload the server
-    # Especially important if you're sending data every loop iteration
+    connection.Pump()
+    print("gimp")
+    myclient.sendData({"action":"message","content":"hello"})
+    #myclient.sendInput()
+   
     pygame.time.wait(50)  # wait for 50 milliseconds

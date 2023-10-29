@@ -1,19 +1,22 @@
 from time import sleep
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
-import os
+import PodSixNet
+import pygame
+
 
 class ClientChannel(Channel):
     def Network_message(self, data):
-        print("Received data from client:", data)
+        #print("Received data from client:", data)
         # Print the message received from the client
-        if 'content' in data:
-            print("Client message:", data['content'])
+        
+        print("Client message:", data['content'], flush=True)
+    
 
-    def Network(self,data):
-        print("recieved data")
 class MyServer(Server):
     channelClass = ClientChannel
+
+    
 
     def Connected(self, channel, addr):
         print("New connection from address:", addr)
@@ -25,4 +28,4 @@ print("server listening")
 while True:
 
     myserver.Pump()
-    sleep(0.01)
+    pygame.time.wait(50)
