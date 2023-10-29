@@ -13,6 +13,6 @@ class MyClient(ConnectionListener):
 
 myclient = MyClient("60.242.224.77", 1337)
 while True:
-    myclient.SendData({"action": "move", "direction": "left"})
+    myclient.SendData({"message":"hello"})
 
     myclient.Pump()
