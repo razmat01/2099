@@ -13,9 +13,12 @@ class MyServer(Server):
     channelClass = ClientChannel
 
     def Connected(self, channel, addr):
+        print("New connection from address:", addr)
         print("New connection:", channel)
 
-myserver = MyServer()
+myserver = MyServer(localaddr=("0.0.0.0", 1337))
+
+print("server listening")
 while True:
     myserver.Pump()
     sleep(0.01)
