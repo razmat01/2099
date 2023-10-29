@@ -11,7 +11,7 @@ class MyClient(ConnectionListener):
     def SendData(self, data):
         self.Send(data)
 
-myclient = MyClient("localhost", 1337)
+myclient = MyClient("60.242.224.77", 1337)
 while True:
     myclient.SendData({"action": "move", "direction": "left"})
 
