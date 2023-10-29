@@ -16,7 +16,7 @@ class MyServer(Server):
         print("New connection from address:", addr)
         print("New connection:", channel)
 
-myserver = MyServer(localaddr=("0.0.0.0", 1337))
+myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
 while True:
