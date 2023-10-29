@@ -25,7 +25,7 @@ class MyClient(ConnectionListener):
         self.Send({"action": "move", "direction": direction})
 
 
-myclient = MyClient("localhost", 1337)
+myclient = MyClient("localhost", 25565)
 while True:
     # Send the user's input to the server
     myclient.sendInput()
