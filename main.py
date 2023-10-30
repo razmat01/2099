@@ -7,7 +7,7 @@ import client
 pygame.init()
 myclient = client.MyClient("localhost", 25565)
 # Screen settings
-scrn = pygame.display.set_mode((1920, 1080))
+scrn = pygame.display.set_mode((1920, 1000))
 pygame.display.set_caption('Displaying Cat Image')
 
 # Load the image
