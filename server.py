@@ -6,17 +6,19 @@ import pygame
 
 
 class ClientChannel(Channel):
+    instances = []
     def Network_message(self, data):
-        #print("Received data from client:", data)
-        # Print the message received from the client
-        
         print("Client message:", data['content'])
+        message = self.addr, " : ", data['content'] , "\n"
+        self.Send({"action":"message","content":message})
+
+    def Network_ping(self,data):
+        print("recieved ping from ", myserver.addr)
+        self.Send({"action": "return", "content": "ping"})
     
 
 class MyServer(Server):
     channelClass = ClientChannel
-
-    
 
     def Connected(self, channel, addr):
         print("New connection from address:", addr)
@@ -30,4 +32,7 @@ while True:
 
 
     myserver.Pump()
+
+    
+
     pygame.time.wait(50)
