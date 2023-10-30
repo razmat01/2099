@@ -2,12 +2,6 @@ from PodSixNet.Connection import ConnectionListener,connection
 import pygame
 import threading
 import time
-#asdasd
-#client class . to be imported from main.py
-#in charge of communications with server. 
-
-
-
 
 class MyClient(ConnectionListener):
     x=0
@@ -56,9 +50,6 @@ class MyClient(ConnectionListener):
         message = input("Enter your message: ")
 
         self.sendData({"action":"message","content": message})
-
-
-
 
 def pumping():
     connection.Pump()

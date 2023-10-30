@@ -9,12 +9,7 @@ class cat():
     x=0
     y=0
 
-
 class ClientChannel(Channel):
-    #instances = []
-
-
-    
     def Network_message(self, data):
         print("Client message:", data['content'])
         message = self.addr, " : ", data['content'] , "\n"
@@ -39,8 +34,7 @@ class ClientChannel(Channel):
             cat.x-=cat.speed
         elif(data["content"] == "D"):
             cat.x+=cat.speed
-    
-
+  
 class MyServer(Server):
     channelClass = ClientChannel
 
