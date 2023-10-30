@@ -1,8 +1,13 @@
 from PodSixNet.Connection import ConnectionListener,connection
 import pygame
 import threading
+import time
 #asdasd
+#client class . to be imported from main.py
+#in charge of communications with server. 
+
 class MyClient(ConnectionListener):
+    
     def __init__(self, host, port):
         
 
@@ -14,20 +19,26 @@ class MyClient(ConnectionListener):
         print("Client message:", data['content'])
 
 
+
     def Network_connected(self,host): #connection message when succesfully connecting
         print("Connected to the server")
     
     def Network_return(self,host): #response from pinging server
         print("ping returned")
-        
+
+    def Network_catreturn(self,data):
+        cat = data["content"]
     def Network(self, data):
         # Handle incoming data from the server here
         pass
 
     def sendPing(self):
         self.Send({"action":"ping"})
+        times = time.clock_gettime_ns()
 
     def sendData(self,message): #send message to server
+        print("sended")
+        print(message)
         self.Send(message)
 
     def SendMove(self, direction): #send movement to server
@@ -40,14 +51,4 @@ class MyClient(ConnectionListener):
         self.sendData({"action":"message","content": message})
 
 
-myclient = MyClient("localhost", 25565)
-while True:
-    myclient.Pump()
-    connection.Pump() #THIS ONE NECESSARY.
-    x = threading.Thread(target=myclient.sendInput)
-    x.start()
 
-    #myclient.sendInput()
-   # print("eee")
-
-    pygame.time.wait(50)  # wait for 50 milliseconds

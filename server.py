@@ -4,9 +4,15 @@ from PodSixNet.Channel import Channel
 import PodSixNet
 import pygame
 
+class cat():
+    imp = pygame.image.load("assets/sprites/cat.png")
+    speed = 1
+    x=0
+    y=0
+
 
 class ClientChannel(Channel):
-    instances = []
+    #instances = []
     def Network_message(self, data):
         print("Client message:", data['content'])
         message = self.addr, " : ", data['content'] , "\n"
@@ -15,6 +21,24 @@ class ClientChannel(Channel):
     def Network_ping(self,data):
         print("recieved ping from ", myserver.addr)
         self.Send({"action": "return", "content": "ping"})
+    
+    def Network_keypress(self,data):
+        print("key presed")
+
+        if(data["content"]=="W"):
+            cat.y-=cat.speed
+        elif(data["content"]=="S"):
+            cat.y+=cat.speed
+        if(data["content"] == "A"):
+            cat.x-=cat.speed
+        elif(data["content"] == "D"):
+            cat.x+=cat.speed
+        self.send({"action":"catreturn","content":cat1})
+
+
+
+
+
     
 
 class MyServer(Server):
@@ -27,10 +51,13 @@ class MyServer(Server):
 myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
+
+cat1 =cat()
+
 while True:
 
 
-
+    
     myserver.Pump()
 
     
