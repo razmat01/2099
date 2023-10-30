@@ -12,6 +12,9 @@ class cat():
 
 class ClientChannel(Channel):
     #instances = []
+
+
+    
     def Network_message(self, data):
         print("Client message:", data['content'])
         message = self.addr, " : ", data['content'] , "\n"
@@ -21,6 +24,10 @@ class ClientChannel(Channel):
         print("recieved ping from ", myserver.addr)
         self.Send({"action": "return", "content": "ping"})
     
+    def Network_updateRequest(self,data):
+        print("update requested")
+        self.Send({"action":"catreturn","x":cat.x,"y":cat.y})
+        
     def Network_keypress(self,data):
         print("key presed")
 
@@ -32,7 +39,7 @@ class ClientChannel(Channel):
             cat.x-=cat.speed
         elif(data["content"] == "D"):
             cat.x+=cat.speed
-        self.Send({"action":"catreturn","x":cat.x,"y":cat.y})
+    
 
 class MyServer(Server):
     channelClass = ClientChannel
@@ -48,10 +55,5 @@ print("server listening")
 cat1 =cat()
 
 while True:
-
-
-    
     myserver.Pump()
-    
-
     pygame.time.wait(50)

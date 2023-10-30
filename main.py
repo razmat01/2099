@@ -34,6 +34,7 @@ while running:
     
 
     # Clear the screen
+    myclient.sendData({"action":"updateRequest"})
     scrn.fill((255, 255, 255))
     myclient.Pump()
     client.pumping()

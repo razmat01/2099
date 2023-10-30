@@ -16,6 +16,11 @@ class MyClient(ConnectionListener):
         self.Connect((host, port)) #connect to the host server
         print(f"Trying to connect to {host}:{port}")
         self.Send({"action": "ping", "content": "ping"})
+    
+    def Network_updateRequest(self,data):
+        print("cat is at ", data["x"]," ",data["y"])
+        x=data["x"]
+        y=data["y"]
 
     def Network_message(self, data):
         print("Client message:", data['content'])
