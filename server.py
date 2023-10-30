@@ -28,7 +28,7 @@ class ClientChannel(Channel):
         print("update requested")
         self.Send({"action":"catreturn","x":cat.x,"y":cat.y})
         
-    def Network_keypress(self,data):
+    def Network_keypress(self,data): #detect keypress for cat
         print("key presed")
 
         if(data["content"]=="W"):
@@ -52,8 +52,8 @@ myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
 
-cat1 =cat()
+cat1 =cat() #initiate cat object
 
 while True:
     myserver.Pump()
-    pygame.time.wait(50)
+    pygame.time.wait(5)
