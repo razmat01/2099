@@ -1,13 +1,11 @@
 import pygame
-from client import MyClient
 
-class cat():
-    x=0
-    y=0
-cat = cat()
+import client
+
+
 
 pygame.init()
-myclient = MyClient("localhost", 25565)
+myclient = client.MyClient("localhost", 25565)
 # Screen settings
 scrn = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('Displaying Cat Image')
@@ -31,12 +29,16 @@ while running:
         myclient.sendData({"action":"keypress","content":"S"})
     if keys[pygame.K_d]:  # D key
         myclient.sendData({"action":"keypress","content":"D"})
+    
+    #myclient.pumping()
+    
 
     # Clear the screen
     scrn.fill((255, 255, 255))
-
+    myclient.Pump()
+    client.pumping()
     # Blit the image on every loop iteration
-    scrn.blit(imp, (cat.x, cat.y))
+    scrn.blit(imp, (myclient.x,myclient.y))
 
     # Update the display
     pygame.display.flip()

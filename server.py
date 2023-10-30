@@ -5,7 +5,6 @@ import PodSixNet
 import pygame
 
 class cat():
-    imp = pygame.image.load("assets/sprites/cat.png")
     speed = 1
     x=0
     y=0
@@ -33,13 +32,7 @@ class ClientChannel(Channel):
             cat.x-=cat.speed
         elif(data["content"] == "D"):
             cat.x+=cat.speed
-        self.send({"action":"catreturn","content":cat1})
-
-
-
-
-
-    
+        self.Send({"action":"catreturn","x":cat.x,"y":cat.y})
 
 class MyServer(Server):
     channelClass = ClientChannel
@@ -59,7 +52,6 @@ while True:
 
     
     myserver.Pump()
-
     
 
     pygame.time.wait(50)

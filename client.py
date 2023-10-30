@@ -6,19 +6,19 @@ import time
 #client class . to be imported from main.py
 #in charge of communications with server. 
 
-class MyClient(ConnectionListener):
-    
-    def __init__(self, host, port):
-        
 
+
+
+class MyClient(ConnectionListener):
+    x=0
+    y=0
+    def __init__(self, host, port):
         self.Connect((host, port)) #connect to the host server
         print(f"Trying to connect to {host}:{port}")
         self.Send({"action": "ping", "content": "ping"})
 
     def Network_message(self, data):
         print("Client message:", data['content'])
-
-
 
     def Network_connected(self,host): #connection message when succesfully connecting
         print("Connected to the server")
@@ -27,7 +27,9 @@ class MyClient(ConnectionListener):
         print("ping returned")
 
     def Network_catreturn(self,data):
-        cat = data["content"]
+        self.x = data["x"]
+        self.y = data["y"]
+    
     def Network(self, data):
         # Handle incoming data from the server here
         pass
@@ -52,3 +54,6 @@ class MyClient(ConnectionListener):
 
 
 
+
+def pumping():
+    connection.Pump()
