@@ -2,10 +2,12 @@ from PodSixNet.Connection import ConnectionListener,connection
 import pygame
 import threading
 import time
+import openlevel
 
 class MyClient(ConnectionListener):
     x=0
     y=0
+    level = ""
     def __init__(self, host, port):
         self.Connect((host, port)) #connect to the host server
         print(f"Trying to connect to {host}:{port}")
@@ -28,10 +30,6 @@ class MyClient(ConnectionListener):
     def Network_catreturn(self,data):
         self.x = data["x"]
         self.y = data["y"]
-    
-    def Network(self, data):
-        # Handle incoming data from the server here
-        pass
 
     def sendPing(self):
         self.Send({"action":"ping"})
@@ -41,6 +39,10 @@ class MyClient(ConnectionListener):
         print("sended")
         print(message)
         self.Send(message)
+    
+    def Network_mapReturn(self,data):
+        level = data["content"]
+        #openlevel.drawLevel(main.scrn,data["content"])
 
     def SendMove(self, direction): #send movement to server
         self.Send({"action": "move", "direction": direction})

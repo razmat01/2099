@@ -1,3 +1,12 @@
+import pygame
+
+
+
+grassImage = pygame.image.load("assets/sprites/grass.png")
+forestImage = pygame.image.load("assets/sprites/forest.png")
+waterImage = pygame.image.load("assets/sprites/water.png")
+catImage = pygame.image.load("assets/sprites/cat.png")
+
 def openlevelfile(level):
     f = open(level,"r")
 
@@ -20,4 +29,17 @@ def openlevelfile(level):
             break
     return columns
 
-print(openlevelfile("level.dat"))
+def drawLevel(scrn,level):
+    y=0
+    for element in level:
+        x=0
+        for element in element:
+            if element == "G":
+                scrn.blit(grassImage, (48*x,48*y))
+            if element == "F":
+                scrn.blit(forestImage, (48*x,48*y))
+            if element == "W":
+                scrn.blit(waterImage, (48*x,48*y))
+            x+=1
+        y+=1
+    return scrn
