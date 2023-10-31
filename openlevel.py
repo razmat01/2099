@@ -19,3 +19,5 @@ def openlevelfile(level):
         else:
             break
     return columns
+
+print(openlevelfile("level.dat"))
