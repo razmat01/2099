@@ -13,11 +13,27 @@ scrn = pygame.display.set_mode((1920, 1000))
 pygame.display.set_caption('Displaying Cat Image')
 
 # Load the image
-imp = pygame.image.load("assets/sprites/cat.png")
+imp = pygame.image.load("assets/sprites/placeholder1.png")
 zoom = 1
+
+unitdummy = client.unitClass.soldierClass()
+unitdummy.x = 100
+unitdummy.y = 400
+unitdummy.type = "soldier"
+unitdummy.attachedPlayer = 0
+client.allUnits.append(unitdummy)
+
+unitdummy2 = client.unitClass.soldierClass()
+unitdummy2.x = 300
+unitdummy2.y = 700
+unitdummy2.type = "soldier"
+unitdummy2.attachedPlayer = 0
+client.allUnits.append(unitdummy2)
+
 
 levelArray = []
 running = True
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -61,10 +77,13 @@ while running:
 
     scrn = openlevel.drawLevel(scrn,levelArray,zoom,mapOffset)
 
-    for cat in client.cats:
+    i=0
+    for i in range(len(client.allUnits)):
+        print(client.allUnits[i])
+        scrn.blit(client.allUnits[i].imp,(client.allUnits[i].x*zoom+mapOffset["x"],client.allUnits[i].y*zoom+mapOffset["y"]))
+        time.sleep(0.02)
 
-        newCat = pygame.transform.scale_by(imp,0.1*zoom)
-        scrn.blit(newCat, (cat.x*zoom+mapOffset["x"],cat.y*zoom+mapOffset["y"]))
+
 
     pygame.display.flip()
 

@@ -4,6 +4,23 @@ import threading
 import time
 import openlevel
 
+allUnits = []
+
+class unitClass():
+    def __init__(self):
+        allUnits.append(self)
+
+    class soldierClass():
+        id=len(allUnits)
+        imp = pygame.image.load("assets/sprites/placeholder1.png")
+        type="soldier"
+        movement = 3
+        x=0
+        y=0
+        def __init__(self):
+            allUnits.append(self)
+        attachedPlayer = 0
+
 cats = []
 class catClass():
     x=0
@@ -23,6 +40,20 @@ class MyClient(ConnectionListener):
         x=data["x"]
         y=data["y"]
 
+    def Network_updateReturn(self,data):
+        print("update returned")
+        try:
+            i=0
+            for i in range(len(allUnits)):
+                print("unit ", allUnits[i+1].id)
+                if(data["id"]==allUnits[i+1].id):
+                    allUnits[i+1].x=data["x"]
+                    allUnits[i+1].y=data["y"]
+                    allUnits[i+1].attachedPlayer=data["player"]
+        except:
+            print("failed")
+            
+
     def Network_message(self, data):
         print("Client message:", data['content'])
 
@@ -32,14 +63,6 @@ class MyClient(ConnectionListener):
     def Network_return(self,host): #response from pinging server
         print("ping returned")
 
-    def Network_catreturn(self,data):
-        #cats = []
-        for i in range(data["i"]):
-            dummycat = catClass
-            dummycat.x=data["x"]
-            dummycat.y=data["y"]
-            cats.append(dummycat)
-            
 
     def sendPing(self):
         self.Send({"action":"ping"})

@@ -5,9 +5,25 @@ import PodSixNet
 import pygame
 import openlevel
 
+allUnits = []
+
 class unitClass():
-    x=0
-    y=0
+    def __init__(self):
+        allUnits.append(self)
+
+    class soldierClass():
+        id=len(allUnits)
+        type="soldier"
+        movement = 3
+        x=0
+        y=0
+        
+        attachedPlayer = 0
+
+        def __init__(self):
+            allUnits.append(self)
+
+
 
 class catClass():
         speed = 1
@@ -15,16 +31,13 @@ class catClass():
         y=0
 
 class playerClass():
-    
-
-    cat = catClass
+    soldier = unitClass.soldierClass
+    soldier.x = 600
+    soldier.y = 400
     address = ""
     channel = ""
-    #cat = cat()
+
     
-        
-
-
 
 class ClientChannel(Channel):
     def Network_message(self, data):
@@ -37,31 +50,16 @@ class ClientChannel(Channel):
         self.Send({"action": "return", "content": "ping"})
     
     def Network_updateRequest(self,data):
-        i=1
-        for player in players:
-            self.Send({"action":"catreturn","x":player.cat.x,"y":player.cat.y,"i":i})
-
-            print("player ",i," y: ", player.cat.y)
-            i+=1
+        i=0
+        #print("update requested")
+        print(allUnits)
+        for i in range(len(allUnits)):
+            print("update for unit ",allUnits[i].id)
+            print("cords ",allUnits[i].x, " ",allUnits[i].y)
+            self.Send({"action":"updateReturn","type":allUnits[i].type,"player":allUnits[i].attachedPlayer,"x":allUnits[i].x,"y":allUnits[i].y,"id":allUnits[i].id})
         
     def Network_keypress(self,data): #detect keypress for cat
-        for player in players:
-            if(player.address == self.addr):
-
-                if(data["content"]=="W"):
-
-                    player.cat.y-=player.cat.speed
-            
-                elif(data["content"]=="S"):
-
-                    print(player.cat.y)
-                    player.cat.y+=player.cat.speed
-
-                if(data["content"] == "A"):
-                    player.cat.x-=player.cat.speed
-
-                elif(data["content"] == "D"):
-                    player.cat.x+=player.cat.speed
+        print("sd")
 
     def Network_requestMap(self,data):
 
@@ -80,6 +78,7 @@ class MyServer(Server):
         dummy.address = addr
         dummy.channel = channel
         players.append(dummy)
+        newUnit = unitClass.soldierClass()
         
 
 players = []
@@ -89,7 +88,20 @@ print("server listening")
 level = openlevel.openlevelfile("level.dat")
  #initiate cat object
 
+newUnit = unitClass.soldierClass()
+newUnit.x= 400
+newUnit.y=500
+newUnit.id = 0
+
+newUnit1 = unitClass.soldierClass()
+newUnit1.x= 200
+newUnit1.y=100
+newUnit1.id = 1
+
 while True:
-    
+    try:
+        players[0].soldier.x = 200     
+    except:
+        print("failed")
     myserver.Pump()
-    pygame.time.wait(5)
+    pygame.time.wait(50)
