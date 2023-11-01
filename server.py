@@ -11,18 +11,25 @@ class unitClass():
     def __init__(self):
         allUnits.append(self)
 
-    class soldierClass():
-        id=len(allUnits)
-        type="soldier"
-        movement = 3
-        x=0
-        y=0
-        
-        attachedPlayer = 0
+class soldierClass(unitClass):
+    def __init__(self):
+        super().__init__()
+        self.id = len(allUnits)
+        self.type = "soldier"
+        self.movement = 3
+        self.x = 0
+        self.y = 0
+        self.attachedPlayer = 1
 
-        def __init__(self):
-            allUnits.append(self)
+class terrainClass():
+    pass
 
+class forestClass(terrainClass):
+    def __init__(self):
+        super().__init__()
+        self.type = "forest"
+        self.x = 0
+        self.y = 0
 
 
 class catClass():
@@ -31,11 +38,12 @@ class catClass():
         y=0
 
 class playerClass():
-    soldier = unitClass.soldierClass
-    soldier.x = 600
-    soldier.y = 400
+    soldiers = []
+
     address = ""
     channel = ""
+    player_number = None  # New attribute to store the player number
+
 
     
 
@@ -52,33 +60,55 @@ class ClientChannel(Channel):
     def Network_updateRequest(self,data):
         i=0
         #print("update requested")
-        print(allUnits)
+
         for i in range(len(allUnits)):
-            print("update for unit ",allUnits[i].id)
-            print("cords ",allUnits[i].x, " ",allUnits[i].y)
             self.Send({"action":"updateReturn","type":allUnits[i].type,"player":allUnits[i].attachedPlayer,"x":allUnits[i].x,"y":allUnits[i].y,"id":allUnits[i].id})
         
-    def Network_keypress(self,data): #detect keypress for cat
-        print("sd")
 
     def Network_requestMap(self,data):
 
         self.Send({"action":"mapReturn","content":"level.dat"})
-
-
+    def Network_move_soldier(self, data):
+        # Identify the soldier by its ID
+        soldier = next((u for u in allUnits if u.id == data["id"]), None)
+        
+        if soldier:
+            # Update the soldier's position
+            soldier.x = data['tile_x']
+            soldier.y = data['tile_y']
+            
+            # Inform all clients about the new position
+            for player in players:
+                player.channel.Send({"action": "update_soldier_position", "id": soldier.id, "x": soldier.x, "y": soldier.y})
 
         
   
 class MyServer(Server):
     channelClass = ClientChannel
+    def __init__(self, *args, **kwargs):
+        Server.__init__(self, *args, **kwargs)
+        self.next_player_number = 0
+
     def Connected(self, channel, addr):
         print("New connection from address:", addr)
         print("New connection:", channel)
-        dummy = playerClass()
-        dummy.address = addr
-        dummy.channel = channel
-        players.append(dummy)
-        newUnit = unitClass.soldierClass()
+        new_player = playerClass()
+        new_player.player_number = self.next_player_number
+        self.next_player_number += 1
+        initialize_soldier_for_player(new_player.player_number)
+        new_player.address = addr
+        new_player.channel = channel
+        players.append(new_player)
+
+        # Send the unique player number to the client
+        channel.Send({"action": "assign_player_number", "player_number": new_player.player_number})
+
+def create_soldier(player_number):
+    soldier = soldierClass()
+    soldier.x, soldier.y = 300, 700
+    soldier.attachedPlayer = player_number
+    return soldier
+
         
 
 players = []
@@ -88,20 +118,31 @@ print("server listening")
 level = openlevel.openlevelfile("level.dat")
  #initiate cat object
 
-newUnit = unitClass.soldierClass()
-newUnit.x= 400
-newUnit.y=500
-newUnit.id = 0
+def initialize_soldier_for_player(player_number):
+    player = next((p for p in players if p.player_number == player_number), None)
+    if player is None:
+        print(f"No player found with player number {player_number}")
+        return
 
-newUnit1 = unitClass.soldierClass()
-newUnit1.x= 200
-newUnit1.y=100
-newUnit1.id = 1
+    for i in range(2):  # Initialize two soldiers
+        soldier = create_soldier(player_number)
+        allUnits.append(soldier)
+        player.soldiers.append(soldier)
+        # Notify all clients about the new soldier
+        for other_player in players:
+            other_player.channel.Send({
+                "action": "add_new_soldier",
+                "type": soldier.type,
+                "player": soldier.attachedPlayer,
+                "x": soldier.x,
+                "y": soldier.y,
+                "id": soldier.id
+            })
+
 
 while True:
-    try:
-        players[0].soldier.x = 200     
-    except:
-        print("failed")
+    for unit in allUnits:
+        if isinstance(unit, soldierClass):
+            print(f"Soldier ID: {unit.id}, X-Position: {unit.x}, Y-Position: {unit.y}, Attached Player: {unit.attachedPlayer}")
     myserver.Pump()
-    pygame.time.wait(50)
+    pygame.time.wait(500)

@@ -16,46 +16,82 @@ pygame.display.set_caption('Displaying Cat Image')
 imp = pygame.image.load("assets/sprites/placeholder1.png")
 zoom = 1
 
-unitdummy = client.unitClass.soldierClass()
-unitdummy.x = 100
-unitdummy.y = 400
-unitdummy.type = "soldier"
-unitdummy.attachedPlayer = 0
-client.allUnits.append(unitdummy)
-
-unitdummy2 = client.unitClass.soldierClass()
-unitdummy2.x = 300
-unitdummy2.y = 700
-unitdummy2.type = "soldier"
-unitdummy2.attachedPlayer = 0
-client.allUnits.append(unitdummy2)
 
 
-levelArray = []
+
+#levelArray = []
 running = True
 
+
+
+
+def network_pumping(): ##thread for inputs and network controls
+    while True:  # Keep this running to continuously handle network operations
+        
+        myclient.Pump()
+        client.pumping()
+        myclient.sendData({"action":"updateRequest"})
+        time.sleep(0.1)
+        
+levelArray=[]
+network_thread = threading.Thread(target=network_pumping)
+network_thread.start()
+current_selected_soldier = None
 while running:
+    # 1. Process events:
+    current_selected_soldier = None  # This will keep track of which soldier is selected by the player
+
+    # Inside your event loop:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 3:  # Right mouse button
+                # Logic for selecting the next soldier
+                print(myclient.player_number)
 
-    if(levelArray==[]):
-        levelArray = openlevel.openlevelfile(myclient.level)
-    
 
-    keys = pygame.key.get_pressed()  # Get keys that are currently pressed down
+                player_units = [unit for unit in client.allUnits if unit.attachedPlayer == myclient.player_number]
+                if not player_units:
+                    current_selected_soldier = None
+                elif current_selected_soldier is None:
+                    current_selected_soldier = player_units[0]
+                else:
+                    idx = player_units.index(current_selected_soldier)
+                    current_selected_soldier = player_units[(idx + 1) % len(player_units)]
+                    
+            if event.button == 1:  # Left mouse button
+                if current_selected_soldier:  # Only send if a soldier is selected
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    tile_x = (mouse_x - mapOffset["x"]) // zoom
+                    tile_y = (mouse_y - mapOffset["y"]) // zoom
+                    myclient.sendData({
+                        "action": "move_soldier",
+                        "id": current_selected_soldier.id,
+                        "tile_x": tile_x, 
+                        "tile_y": tile_y
+                    })
+                    current_selected_soldier.x = tile_x
+                    current_selected_soldier.y = tile_y
+
+
+
+    # ... (rest of the key checks)
+    keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:  # W key
         myclient.sendData({"action":"keypress","content":"W"})
     if keys[pygame.K_a]:  # A key
         myclient.sendData({"action":"keypress","content":"A"})
     if keys[pygame.K_s]:  # S key
-        myclient.sendData({"action":"keypress","content":"S"})
+            myclient.sendData({"action":"keypress","content":"S"})
     if keys[pygame.K_d]:  # D key
         myclient.sendData({"action":"keypress","content":"D"})
+        #time.sleep(0.1)  # prevent the loop from running too fast
+
     if keys[pygame.K_l]:
-        zoom+=zoom/20 #zoom in
+        zoom+=zoom/40 #zoom in
     if keys[pygame.K_k]:
-        zoom-=zoom/20 #zoom out
+        zoom-=zoom/40 #zoom out
     if keys[pygame.K_UP]:
         mapOffset["y"] += 3#pan up
     if keys[pygame.K_DOWN]:
@@ -64,32 +100,24 @@ while running:
         mapOffset["x"] += -3 #pan right
     if keys[pygame.K_LEFT]:
         mapOffset["x"] += 3 # pan left
-    
+    for unit in client.allUnits:
+        if isinstance(unit, client.soldierClass):  # Only print for soldiers (if you have other unit types in the list)
+            print(f"your player id: {myclient.player_number}")
+            print(f"Soldier ID: {unit.id}, Attached Player: {unit.attachedPlayer}")
 
-    
+    # 3. Update game state:
+    if not levelArray:
+        levelArray = openlevel.openlevelfile(myclient.level)
 
-    # Clear the screen
-    myclient.sendData({"action":"updateRequest"})
-
+    # 4. Draw:
     scrn.fill((0, 0, 0))
-    myclient.Pump()
-    client.pumping()
-
-    scrn = openlevel.drawLevel(scrn,levelArray,zoom,mapOffset)
-
-    i=0
-    for i in range(len(client.allUnits)):
-        print(client.allUnits[i])
-        scrn.blit(client.allUnits[i].imp,(client.allUnits[i].x*zoom+mapOffset["x"],client.allUnits[i].y*zoom+mapOffset["y"]))
-        time.sleep(0.02)
-
-
-
+    scrn = openlevel.drawLevel(scrn, levelArray, zoom, mapOffset)
+    for unit in client.allUnits:
+        print(unit.attachedPlayer)
+        scrn.blit(unit.imp, (unit.x * zoom + mapOffset["x"], unit.y * zoom + mapOffset["y"]))
     pygame.display.flip()
 
+    # 5. Frame limiting:
     clock.tick(60)
     #print(clock.get_fps())
-    # Update the display
-    
-
 pygame.quit()
