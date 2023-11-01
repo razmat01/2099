@@ -37,9 +37,9 @@ while running:
     if keys[pygame.K_d]:  # D key
         myclient.sendData({"action":"keypress","content":"D"})
     if keys[pygame.K_l]:
-        zoom+=zoom/10 #zoom in
+        zoom+=zoom/20 #zoom in
     if keys[pygame.K_k]:
-        zoom-=zoom/10 #zoom out
+        zoom-=zoom/20 #zoom out
     if keys[pygame.K_UP]:
         mapOffset["y"] += 3#pan up
     if keys[pygame.K_DOWN]:
