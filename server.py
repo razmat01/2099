@@ -6,9 +6,18 @@ import pygame
 import openlevel
 
 class cat():
-    speed = 1
-    x=0
-    y=0
+        speed = 1
+        x=0
+        y=0
+
+class playerClass():
+    address = ""
+    channel = ""
+    #cat = cat()
+    
+        
+
+
 
 class ClientChannel(Channel):
     def Network_message(self, data):
@@ -24,8 +33,6 @@ class ClientChannel(Channel):
         self.Send({"action":"catreturn","x":cat.x,"y":cat.y})
         
     def Network_keypress(self,data): #detect keypress for cat
-
-
         if(data["content"]=="W"):
             cat.y-=cat.speed
         elif(data["content"]=="S"):
@@ -44,11 +51,15 @@ class ClientChannel(Channel):
   
 class MyServer(Server):
     channelClass = ClientChannel
-
     def Connected(self, channel, addr):
         print("New connection from address:", addr)
         print("New connection:", channel)
+        dummy = playerClass()
+        dummy.address = addr
+        dummy.channel = channel
+        players.append(dummy)
 
+players = []
 myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
@@ -56,5 +67,14 @@ level = openlevel.openlevelfile("level.dat")
 cat1 =cat() #initiate cat object
 
 while True:
+    try:
+        print(players[0].address," ",players[0].channel)
+    except:
+        print("no player[0].address")
+    try:
+        print(players[1].address," ",players[1].channel)
+    except:
+        print("no player[1].address")
+
     myserver.Pump()
-    pygame.time.wait(5)
+    pygame.time.wait(500)
