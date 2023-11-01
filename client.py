@@ -4,9 +4,14 @@ import threading
 import time
 import openlevel
 
-class MyClient(ConnectionListener):
+cats = []
+class catClass():
     x=0
     y=0
+
+class MyClient(ConnectionListener):
+
+
     level = "level.dat"
     def __init__(self, host, port):
         self.Connect((host, port)) #connect to the host server
@@ -28,8 +33,13 @@ class MyClient(ConnectionListener):
         print("ping returned")
 
     def Network_catreturn(self,data):
-        self.x = data["x"]
-        self.y = data["y"]
+        #cats = []
+        for i in range(data["i"]):
+            dummycat = catClass
+            dummycat.x=data["x"]
+            dummycat.y=data["y"]
+            cats.append(dummycat)
+            
 
     def sendPing(self):
         self.Send({"action":"ping"})

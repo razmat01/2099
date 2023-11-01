@@ -61,8 +61,10 @@ while running:
 
     scrn = openlevel.drawLevel(scrn,levelArray,zoom,mapOffset)
 
-    newCat = pygame.transform.scale_by(imp,0.1*zoom)
-    scrn.blit(newCat, (myclient.x*zoom+mapOffset["x"],myclient.y*zoom+mapOffset["y"]))
+    for cat in client.cats:
+
+        newCat = pygame.transform.scale_by(imp,0.1*zoom)
+        scrn.blit(newCat, (cat.x*zoom+mapOffset["x"],cat.y*zoom+mapOffset["y"]))
 
     pygame.display.flip()
 

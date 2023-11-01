@@ -33,14 +33,15 @@ class ClientChannel(Channel):
         self.Send({"action": "return", "content": "ping"})
     
     def Network_updateRequest(self,data):
+        i=1
         for player in players:
-            if(player.address == self.addr):
-                self.Send({"action":"catreturn","x":player.cat.x,"y":player.cat.y})
+            self.Send({"action":"catreturn","x":player.cat.x,"y":player.cat.y,"i":i})
+            i+=1
         
     def Network_keypress(self,data): #detect keypress for cat
         for player in players:
             if(player.address == self.addr):
-                print("CUM")
+
                 if(data["content"]=="W"):
                     
                     player.cat.y-=player.cat.speed
