@@ -5,12 +5,15 @@ import PodSixNet
 import pygame
 import openlevel
 
-class cat():
+class catClass():
         speed = 1
         x=0
         y=0
 
 class playerClass():
+    
+
+    cat = catClass
     address = ""
     channel = ""
     #cat = cat()
@@ -30,17 +33,27 @@ class ClientChannel(Channel):
         self.Send({"action": "return", "content": "ping"})
     
     def Network_updateRequest(self,data):
-        self.Send({"action":"catreturn","x":cat.x,"y":cat.y})
+        for player in players:
+            if(player.address == self.addr):
+                self.Send({"action":"catreturn","x":player.cat.x,"y":player.cat.y})
         
     def Network_keypress(self,data): #detect keypress for cat
-        if(data["content"]=="W"):
-            cat.y-=cat.speed
-        elif(data["content"]=="S"):
-            cat.y+=cat.speed
-        if(data["content"] == "A"):
-            cat.x-=cat.speed
-        elif(data["content"] == "D"):
-            cat.x+=cat.speed
+        for player in players:
+            if(player.address == self.addr):
+                print("CUM")
+                if(data["content"]=="W"):
+                    
+                    player.cat.y-=player.cat.speed
+            
+                elif(data["content"]=="S"):
+                    player.cat.y+=player.cat.speed
+
+                if(data["content"] == "A"):
+                    player.cat.x-=player.cat.speed
+
+                elif(data["content"] == "D"):
+                    player.cat.x+=player.cat.speed
+
     def Network_requestMap(self,data):
 
         self.Send({"action":"mapReturn","content":"level.dat"})
@@ -58,16 +71,15 @@ class MyServer(Server):
         dummy.address = addr
         dummy.channel = channel
         players.append(dummy)
+        
 
 players = []
 myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
 level = openlevel.openlevelfile("level.dat")
-cat1 =cat() #initiate cat object
+ #initiate cat object
 
 while True:
-    
-
     myserver.Pump()
     pygame.time.wait(5)
