@@ -77,4 +77,4 @@ while True:
         print("no player[1].address")
 
     myserver.Pump()
-    pygame.time.wait(500)
+    pygame.time.wait(5)
