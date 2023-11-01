@@ -67,14 +67,7 @@ level = openlevel.openlevelfile("level.dat")
 cat1 =cat() #initiate cat object
 
 while True:
-    try:
-        print(players[0].address," ",players[0].channel)
-    except:
-        print("no player[0].address")
-    try:
-        print(players[1].address," ",players[1].channel)
-    except:
-        print("no player[1].address")
+    
 
     myserver.Pump()
     pygame.time.wait(5)
