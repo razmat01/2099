@@ -35,11 +35,9 @@ class ClientChannel(Channel):
         elif(data["content"] == "D"):
             cat.x+=cat.speed
     def Network_requestMap(self,data):
-        print("cum")
-        try:
-            self.Send({"action":"mapReturn","content":"level.dat"})
-        except TypeError:
-            print("shit")
+
+        self.Send({"action":"mapReturn","content":"level.dat"})
+
 
 
         

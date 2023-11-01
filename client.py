@@ -7,14 +7,14 @@ import openlevel
 class MyClient(ConnectionListener):
     x=0
     y=0
-    level = ""
+    level = "level.dat"
     def __init__(self, host, port):
         self.Connect((host, port)) #connect to the host server
         print(f"Trying to connect to {host}:{port}")
         self.Send({"action": "ping", "content": "ping"})
     
     def Network_updateRequest(self,data):
-        print("cat is at ", data["x"]," ",data["y"])
+
         x=data["x"]
         y=data["y"]
 
@@ -36,12 +36,13 @@ class MyClient(ConnectionListener):
         times = time.clock_gettime_ns()
 
     def sendData(self,message): #send message to server
-        print("sended")
-        print(message)
+
+
         self.Send(message)
     
     def Network_mapReturn(self,data):
         level = data["content"]
+        print(level, "     e")
         #openlevel.drawLevel(main.scrn,data["content"])
 
     def SendMove(self, direction): #send movement to server

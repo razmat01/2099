@@ -2,9 +2,10 @@ import pygame
 import openlevel
 import client
 import time
+import threading
 
-
-
+clock = pygame.time.Clock()
+mapOffset = {"x":0,"y":0}
 pygame.init()
 myclient = client.MyClient("localhost", 25565)
 # Screen settings
@@ -13,41 +14,62 @@ pygame.display.set_caption('Displaying Cat Image')
 
 # Load the image
 imp = pygame.image.load("assets/sprites/cat.png")
-myclient.sendData({"action":"requestMap"})
-time.sleep(0.5)
+zoom = 1
 
+levelArray = []
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+    if(levelArray==[]):
+        levelArray = openlevel.openlevelfile(myclient.level)
+    
 
     keys = pygame.key.get_pressed()  # Get keys that are currently pressed down
     if keys[pygame.K_w]:  # W key
         myclient.sendData({"action":"keypress","content":"W"})
     if keys[pygame.K_a]:  # A key
-        print("A")
         myclient.sendData({"action":"keypress","content":"A"})
     if keys[pygame.K_s]:  # S key
         myclient.sendData({"action":"keypress","content":"S"})
     if keys[pygame.K_d]:  # D key
         myclient.sendData({"action":"keypress","content":"D"})
+    if keys[pygame.K_l]:
+        zoom+=zoom/10 #zoom in
+    if keys[pygame.K_k]:
+        zoom-=zoom/10 #zoom out
+    if keys[pygame.K_UP]:
+        #pan up
+        mapOffset["y"] += 3
+    if keys[pygame.K_DOWN]:
+        mapOffset["y"] += -3
+    if keys[pygame.K_RIGHT]:
+        mapOffset["x"] += -3
+    if keys[pygame.K_LEFT]:
+        mapOffset["x"] += 3
     
-    #myclient.pumping()
+
     
 
     # Clear the screen
     myclient.sendData({"action":"updateRequest"})
-    scrn.fill((255, 255, 255))
+
+    scrn.fill((0, 0, 0))
     myclient.Pump()
     client.pumping()
-    # Blit the image on every loop iteration
 
-    scrn = openlevel.drawLevel(scrn,myclient.level)
-    scrn.blit(imp, (myclient.x,myclient.y))
+    scrn = openlevel.drawLevel(scrn,levelArray,zoom,mapOffset)
 
-    # Update the display
+    newCat = pygame.transform.scale_by(imp,0.1*zoom)
+    scrn.blit(newCat, (myclient.x*zoom+mapOffset["x"],myclient.y*zoom+mapOffset["y"]))
+
     pygame.display.flip()
+
+    clock.tick(60)
+    #print(clock.get_fps())
+    # Update the display
+    
 
 pygame.quit()
