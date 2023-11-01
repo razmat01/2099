@@ -35,7 +35,7 @@ def drawLevel(scrn,level,zoom,mapOffset = {"x":0,"y":0}):
     for element in level:
         x=0
         for element in element:
-            if((48*x*zoom+mapOffset["x"])<1920 or (48*y*zoom+mapOffset["y"]<1080)):
+            if(10 < (48*x*zoom+mapOffset["x"])<1900 and (10 < 48*y*zoom+mapOffset["y"]<1000)):
                 if element == "G":
                     newGrass = pygame.transform.scale_by(grassImage,zoom)
                     scrn.blit(newGrass, (48*x*zoom+mapOffset["x"],48*y*zoom+mapOffset["y"]))

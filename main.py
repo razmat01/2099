@@ -41,14 +41,13 @@ while running:
     if keys[pygame.K_k]:
         zoom-=zoom/10 #zoom out
     if keys[pygame.K_UP]:
-        #pan up
-        mapOffset["y"] += 3
+        mapOffset["y"] += 3#pan up
     if keys[pygame.K_DOWN]:
-        mapOffset["y"] += -3
+        mapOffset["y"] += -3 #pan down
     if keys[pygame.K_RIGHT]:
-        mapOffset["x"] += -3
+        mapOffset["x"] += -3 #pan right
     if keys[pygame.K_LEFT]:
-        mapOffset["x"] += 3
+        mapOffset["x"] += 3 # pan left
     
 
     
