@@ -20,7 +20,7 @@ class soldierClass(unitClass):
         self.movement = 3
         self.x = 0
         self.y = 0
-        self.attachedPlayer = 1
+        self.attachedPlayer = None
         self.imp = SOLDIER_IMAGE
 
 
