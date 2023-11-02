@@ -36,7 +36,9 @@ current_selected_soldier = None
 current_unit_index = 0
 while running:
     player_units = [unit for unit in client.allUnits if unit.attachedPlayer == myclient.player_number] #list of all units player owns
-    client.purge_soldiers()
+    try:
+        client.purge_soldiers()
+    except:pass
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
