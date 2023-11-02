@@ -14,6 +14,7 @@ pygame.display.set_caption('Displaying Cat Image')
 
 # Load the image
 imp = pygame.image.load("assets/sprites/placeholder1.png")
+targetImage = pygame.image.load("assets/sprites/targetplaceholder.png")
 zoom = 1
 
 
@@ -59,13 +60,15 @@ while running:
                     myclient.sendData({
                         "action": "move_soldier",
                         "id": current_selected_soldier.id,
-                        "tile_x": tile_x, 
-                        "tile_y": tile_y
+                        "tile_x": tile_x - (tile_x%48), 
+                        "tile_y": tile_y - (tile_y%48)
                     })
-                    current_selected_soldier.x = tile_x
-                    current_selected_soldier.y = tile_y
+                    current_selected_soldier.x = tile_x - (tile_x%48)
+                    current_selected_soldier.y = tile_y - (tile_y%48)
 
 
+
+    
 
 
     keys = pygame.key.get_pressed()
@@ -97,13 +100,26 @@ while running:
     if not levelArray:
         levelArray = openlevel.openlevelfile(myclient.level)
 
+    #scrn.blit(newGrass, (48*x*zoom+mapOffset["x"],48*y*zoom+mapOffset["y"]))
+
 
     scrn.fill((0, 0, 0))
     scrn = openlevel.drawLevel(scrn, levelArray, zoom, mapOffset)
+    mousex, mousey = pygame.mouse.get_pos()
+    mousex = (mousex-mapOffset["x"])/zoom
+    mousey = (mousey-mapOffset["y"])/zoom
 
+    newTarget = pygame.transform.scale_by(targetImage,zoom)
+
+    #print(mousepos)
+    scrn.blit(newTarget, ((mousex - (mousex%48)) * zoom + mapOffset["x"], (mousey - (mousey%48)) * zoom + mapOffset["y"]))
     for unit in client.allUnits:
-        scrn.blit(unit.imp, (unit.x * zoom + mapOffset["x"], unit.y * zoom + mapOffset["y"]))
+        newUnit = pygame.transform.scale_by(unit.imp,zoom)
+        scrn.blit(newUnit, (unit.x * zoom + mapOffset["x"], unit.y * zoom + mapOffset["y"]))
 
+    if current_selected_soldier:
+        #print("image printing at ",current_selected_soldier.x * zoom + mapOffset["x"]," ", current_selected_soldier.y * zoom + mapOffset["y"])
+        scrn.blit(newTarget, (current_selected_soldier.x * zoom + mapOffset["x"], current_selected_soldier.y * zoom + mapOffset["y"]))
     pygame.display.flip()
 
 

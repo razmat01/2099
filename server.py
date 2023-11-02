@@ -74,8 +74,8 @@ class ClientChannel(Channel):
         
         if soldier:
             # Update the soldier's position
-            soldier.x = data['tile_x']
-            soldier.y = data['tile_y']
+            soldier.x = data['tile_x'] - (data['tile_x']%48)
+            soldier.y = data['tile_y'] - (data['tile_y']%48)
             
             # Inform all clients about the new position
             for player in players:
