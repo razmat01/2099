@@ -121,7 +121,7 @@ while running:
             scrn.blit(newTarget, (current_selected_soldier.x * zoom + mapOffset["x"], current_selected_soldier.y * zoom + mapOffset["y"]))
     elif(client.gameStatus==False):
         scrn.fill((0, 0, 0))
-        scrn.blit(startingImage,500,700)
+        scrn.blit(startingImage,(500,500))
 
     pygame.display.flip()
 
