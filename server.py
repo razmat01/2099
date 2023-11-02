@@ -69,7 +69,9 @@ class ClientChannel(Channel):
             
             # Inform all clients about the new position
             for player in players:
-                player.channel.Send({"action": "update_soldier_position", "id": soldier.id, "x": soldier.x, "y": soldier.y})
+                #player.channel.Send({"action": "update_soldier_position", "id": soldier.id, "x": soldier.x, "y": soldier.y})
+                for i in range(len(allUnits)):
+                    self.Send({"action":"updateReturn","type":allUnits[i].type,"player":allUnits[i].attachedPlayer,"x":allUnits[i].x,"y":allUnits[i].y,"id":allUnits[i].id})
 
         
   
@@ -128,6 +130,7 @@ def initialize_soldier_for_player(player_number):
                 "y": soldier.y,
                 "id": soldier.id
             })
+    
 
 while True:
     myserver.Pump()
