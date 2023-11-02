@@ -1,9 +1,10 @@
 from PodSixNet.Connection import ConnectionListener,connection
 import pygame
-import threading
+from threading import Lock
 import time
 import openlevel
 
+allUnits_lock = Lock()
 SOLDIER_IMAGE = pygame.image.load("assets/sprites/placeholder1.png")
 allUnits = []
 
@@ -31,16 +32,17 @@ class catClass():
 
 class MyClient(ConnectionListener):
     def Network_add_new_soldier(self, data):
-        # Create a new soldier instance using the provided data
-        soldier = soldierClass()
-        soldier.id = data["id"]
-        soldier.type = data["type"]
-        soldier.x = data["x"]
-        soldier.y = data["y"]
-        soldier.attachedPlayer = data["player"]
-        # Append the new soldier to the allUnits list
-        print(soldier,"  soldirer")
-        allUnits.append(soldier)
+        with allUnits_lock:  # acquire lock before modifying allUnits
+            # create a new soldier instance using the provided data
+            soldier = soldierClass()
+            soldier.id = data["id"]
+            soldier.type = data["type"]
+            soldier.x = data["x"]
+            soldier.y = data["y"]
+            soldier.attachedPlayer = data["player"]
+            # Append the new soldier to the allUnits list
+            print(soldier, "  soldier")
+
 
     level = "level.dat"
     def __init__(self, host, port):
@@ -54,18 +56,15 @@ class MyClient(ConnectionListener):
         x=data["x"]
         y=data["y"]
     def Network_update_soldier_position(self, data):
-    # Find the soldier and update its position
-        unit = next((u for u in allUnits if u.id == data["id"]), None)
-        if not unit:
-            unit = soldierClass()
-            allUnits.append(unit)
-            
-        unit.x = data["x"]
-        unit.y = data["y"]
+        with allUnits_lock:  # acquire lock before modifying allUnits
+            # find the soldier and update its position
+            unit = next((u for u in allUnits if u.id == data["id"]), None)
+            if not unit:
+                unit = soldierClass()
+                allUnits.append(unit)
 
-        
-        unit.x = data["x"]
-        unit.y = data["y"]
+            unit.x = data["x"]
+            unit.y = data["y"]
 
             
 
@@ -108,4 +107,4 @@ class MyClient(ConnectionListener):
 
 def pumping():
     connection.Pump()
-    time.sleep(0.1)
+    time.sleep(0.05)

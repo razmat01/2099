@@ -95,13 +95,16 @@ class MyServer(Server):
         new_player = playerClass()
         new_player.player_number = self.next_player_number
         self.next_player_number += 1
-        initialize_soldier_for_player(new_player.player_number)
+        #initialize_soldier_for_player(new_player.player_number)
         new_player.address = addr
         new_player.channel = channel
         players.append(new_player)
 
         # Send the unique player number to the client
         channel.Send({"action": "assign_player_number", "player_number": new_player.player_number})
+        sleep(0.5)
+        initialize_soldier_for_player(new_player.player_number)
+
 
 def create_soldier(player_number):
     soldier = soldierClass()
@@ -124,11 +127,11 @@ def initialize_soldier_for_player(player_number):
         print(f"No player found with player number {player_number}")
         return
 
-    for i in range(2):  # Initialize two soldiers
+    for i in range(2):  # initialize two soldiers
         soldier = create_soldier(player_number)
         allUnits.append(soldier)
         player.soldiers.append(soldier)
-        # Notify all clients about the new soldier
+        # notify all clients about the new soldier
         for other_player in players:
             other_player.channel.Send({
                 "action": "add_new_soldier",
@@ -139,10 +142,7 @@ def initialize_soldier_for_player(player_number):
                 "id": soldier.id
             })
 
-
 while True:
-    for unit in allUnits:
-        if isinstance(unit, soldierClass):
-            print(f"Soldier ID: {unit.id}, X-Position: {unit.x}, Y-Position: {unit.y}, Attached Player: {unit.attachedPlayer}")
+    
     myserver.Pump()
-    pygame.time.wait(500)
+    pygame.time.wait(5)
