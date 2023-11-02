@@ -17,14 +17,8 @@ imp = pygame.image.load("assets/sprites/placeholder1.png")
 targetImage = pygame.image.load("assets/sprites/targetplaceholder.png")
 zoom = 1
 
-
-
-
 #levelArray = []
 running = True
-
-
-
 
 def network_pumping(): ##thread for inputs and network controls
     while True:  # Keep this running to continuously handle network operations
