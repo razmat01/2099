@@ -6,6 +6,8 @@ import pygame
 import openlevel
 
 allUnits = []
+gameStart = False
+turn = 0
 
 class unitClass():
     def __init__(self):
@@ -47,13 +49,22 @@ class ClientChannel(Channel):
     def Network_ping(self,data):
         print("recieved ping from ", myserver.addr)
         self.Send({"action": "return", "content": "ping"})
-    
+    def Close(self):
+        print("disconnected")
+        myserver.remove_units(self)
     def Network_updateRequest(self,data):
         i=0
         #print("update requested")
 
         for i in range(len(allUnits)):
-            self.Send({"action":"updateReturn","type":allUnits[i].type,"player":allUnits[i].attachedPlayer,"x":allUnits[i].x,"y":allUnits[i].y,"id":allUnits[i].id})
+            self.Send({
+                "action":"updateReturn",
+                "type":allUnits[i].type,
+                "player":allUnits[i].attachedPlayer,
+                "x":allUnits[i].x,
+                "y":allUnits[i].y,
+                "id":allUnits[i].id,
+                "gameStatus":gameStart})
         
     def Network_requestMap(self,data):
 
@@ -81,6 +92,15 @@ class MyServer(Server):
         Server.__init__(self, *args, **kwargs)
         self.next_player_number = 0
 
+    def remove_units(self,addr):
+        player = next((p for p in players if p.address == addr), None)
+        if player is not None:
+            player_soldiers = [s for s in allUnits if s.attachedPlayer == player.player_number]
+            for soldier in player_soldiers:
+                allUnits.remove(soldier)
+
+            players.remove(player)
+        
     def Connected(self, channel, addr):
         print("New connection from address:", addr)
         print("New connection:", channel)
@@ -95,7 +115,12 @@ class MyServer(Server):
         # Send the unique player number to the client
         channel.Send({"action": "assign_player_number", "player_number": new_player.player_number})
         sleep(0.5)
-        initialize_soldier_for_player(new_player.player_number)
+        #initialize_soldier_for_player(new_player.player_number)
+
+def gameStart():
+    for player in players:
+        initialize_soldier_for_player(player.player_number)
+        gameStart=True
 
 def create_soldier(player_number):
     soldier = soldierClass()
@@ -108,7 +133,7 @@ myserver = MyServer(localaddr=("0.0.0.0", 25565))
 
 print("server listening")
 level = openlevel.openlevelfile("level.dat")
- #initiate cat object
+
 
 def initialize_soldier_for_player(player_number):
     player = next((p for p in players if p.player_number == player_number), None)
@@ -130,9 +155,11 @@ def initialize_soldier_for_player(player_number):
                 "y": soldier.y,
                 "id": soldier.id
             })
-    
 
 while True:
+    if(len(players)==2):
+        gameStart=True
+    
     myserver.Pump()
-
+    
     pygame.time.wait(5)

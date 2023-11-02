@@ -4,6 +4,7 @@ from threading import Lock
 import time
 import openlevel
 
+gameStatus = False
 allUnits_lock = Lock()
 SOLDIER_IMAGE = pygame.image.load("assets/sprites/placeholder1.png")
 allUnits = []
@@ -63,6 +64,7 @@ class MyClient(ConnectionListener):
         y=data["y"]
     def Network_updateReturn(self, data):
     # Lock the allUnits list for thread-safe operation
+        gameStart = data["gameStatus"]
         with allUnits_lock:
             # Find the unit with the matching ID
             unit = next((u for u in allUnits if u.id == data["id"]), None)
