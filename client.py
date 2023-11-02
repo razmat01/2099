@@ -55,7 +55,7 @@ class MyClient(ConnectionListener):
 
         x=data["x"]
         y=data["y"]
-    def Network_update_soldier_position(self, data):
+    def Network_updateReturn(self, data):
         with allUnits_lock:  # acquire lock before modifying allUnits
             # find the soldier and update its position
             unit = next((u for u in allUnits if u.id == data["id"]), None)
