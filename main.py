@@ -7,7 +7,7 @@ import threading
 clock = pygame.time.Clock()
 mapOffset = {"x":0,"y":0}
 pygame.init()
-myclient = client.MyClient("localhost", 25565)
+myclient = client.MyClient("60.241.183.146", 25565)
 # Screen settings
 scrn = pygame.display.set_mode((1920, 1000))
 pygame.display.set_caption('Displaying Cat Image')
