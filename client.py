@@ -8,6 +8,12 @@ allUnits_lock = Lock()
 SOLDIER_IMAGE = pygame.image.load("assets/sprites/placeholder1.png")
 allUnits = []
 
+def purge_soldiers():
+    #print(newsoldiers)
+    allUnits=[]
+    #newsoldiers = [obj for obj in units if hasattr(obj, "attachedPlayer") and getattr(obj, "attachedPlayer") is not None]
+
+
 class unitClass():
     def __init__(self):
         allUnits.append(self)
@@ -56,15 +62,22 @@ class MyClient(ConnectionListener):
         x=data["x"]
         y=data["y"]
     def Network_updateReturn(self, data):
-
-            print("ID: ",data["id"])
+    # Lock the allUnits list for thread-safe operation
+        with allUnits_lock:
+            # Find the unit with the matching ID
             unit = next((u for u in allUnits if u.id == data["id"]), None)
+
+            # If the unit doesn't exist, create it and append it to the list
             if not unit:
                 unit = soldierClass()
+                unit.id = data["id"]
                 allUnits.append(unit)
 
+            # Update the unit's attributes
             unit.x = data["x"]
             unit.y = data["y"]
+            unit.attachedPlayer = data["player"]
+
 
             
 
@@ -105,9 +118,7 @@ class MyClient(ConnectionListener):
 
         self.sendData({"action":"message","content": message})
 
-def purge_soldiers():
-    newsoldiers = [obj for obj in allUnits if hasattr(obj, "attachedPlayer") and getattr(obj, "attachedPlayer") is not None]
-    allUnits = newsoldiers
+
 
 def pumping():
     connection.Pump()

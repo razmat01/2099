@@ -21,6 +21,8 @@ zoom = 1
 running = True
 
 
+
+
 def network_pumping(): ##thread for inputs and network controls
     while True:  # Keep this running to continuously handle network operations
         
@@ -36,9 +38,10 @@ current_selected_soldier = None
 current_unit_index = 0
 while running:
     player_units = [unit for unit in client.allUnits if unit.attachedPlayer == myclient.player_number] #list of all units player owns
-    try:
-        client.purge_soldiers()
-    except:pass
+
+    #print("purged")
+    #client.purge_soldiers()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -110,9 +113,11 @@ while running:
 
     #print(mousepos)
     scrn.blit(newTarget, ((mousex - (mousex%48)) * zoom + mapOffset["x"], (mousey - (mousey%48)) * zoom + mapOffset["y"]))
-    for unit in client.allUnits:
-        newUnit = pygame.transform.scale_by(unit.imp,zoom)
-        scrn.blit(newUnit, (unit.x * zoom + mapOffset["x"], unit.y * zoom + mapOffset["y"]))
+    try:
+        for unit in client.allUnits:
+            newUnit = pygame.transform.scale_by(unit.imp,zoom)
+            scrn.blit(newUnit, (unit.x * zoom + mapOffset["x"], unit.y * zoom + mapOffset["y"]))
+    except:pass
 
     if current_selected_soldier:
         #print("image printing at ",current_selected_soldier.x * zoom + mapOffset["x"]," ", current_selected_soldier.y * zoom + mapOffset["y"])
