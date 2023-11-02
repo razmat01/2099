@@ -29,6 +29,7 @@ def network_pumping(): ##thread for inputs and network controls
         
         myclient.Pump()
         client.pumping()
+        #print("request update")
         myclient.sendData({"action":"updateRequest"})
         time.sleep(0.1)
         
@@ -38,7 +39,7 @@ network_thread.start()
 current_selected_soldier = None
 current_unit_index = 0
 while running:
-    if(client.gameStatus == True):
+  
         player_units = [unit for unit in client.allUnits if unit.attachedPlayer == myclient.player_number] #list of all units player owns
 
         #print("purged")
@@ -119,13 +120,9 @@ while running:
         if current_selected_soldier:
             #print("image printing at ",current_selected_soldier.x * zoom + mapOffset["x"]," ", current_selected_soldier.y * zoom + mapOffset["y"])
             scrn.blit(newTarget, (current_selected_soldier.x * zoom + mapOffset["x"], current_selected_soldier.y * zoom + mapOffset["y"]))
-    elif(client.gameStatus==False):
-        scrn.fill((0, 0, 0))
-        scrn.blit(startingImage,(500,500))
-
-    pygame.display.flip()
 
 
-    clock.tick(60)
+        pygame.display.flip()
+        clock.tick(60)
 
 pygame.quit()

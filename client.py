@@ -65,6 +65,8 @@ class MyClient(ConnectionListener):
     def Network_updateReturn(self, data):
     # Lock the allUnits list for thread-safe operation
         gameStart = data["gameStatus"]
+        print("starting: ",gameStart)
+        
         with allUnits_lock:
             # Find the unit with the matching ID
             unit = next((u for u in allUnits if u.id == data["id"]), None)
@@ -92,6 +94,8 @@ class MyClient(ConnectionListener):
     def Network_assign_player_number(self, data):
         self.player_number = data["player_number"]
         print(f"Assigned player number: {self.player_number}")
+        print("game status = ",gameStart)
+        gameStart = data["gameStatus"]
         
     def Network_return(self,host): #response from pinging server
         print("ping returned")

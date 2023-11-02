@@ -54,8 +54,8 @@ class ClientChannel(Channel):
         myserver.remove_units(self)
     def Network_updateRequest(self,data):
         i=0
-        #print("update requested")
-
+        print("update requested")
+        
         for i in range(len(allUnits)):
             self.Send({
                 "action":"updateReturn",
@@ -113,7 +113,9 @@ class MyServer(Server):
         players.append(new_player)
 
         # Send the unique player number to the client
-        channel.Send({"action": "assign_player_number", "player_number": new_player.player_number})
+        if(len(players)==2):
+            gameStart=True
+        channel.Send({"action": "assign_player_number", "player_number": new_player.player_number,"gameStatus":gameStart})
         sleep(0.5)
         #initialize_soldier_for_player(new_player.player_number)
 
