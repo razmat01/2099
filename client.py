@@ -56,8 +56,8 @@ class MyClient(ConnectionListener):
         x=data["x"]
         y=data["y"]
     def Network_updateReturn(self, data):
-        with allUnits_lock:  # acquire lock before modifying allUnits
-            # find the soldier and update its position
+
+            print("ID: ",data["id"])
             unit = next((u for u in allUnits if u.id == data["id"]), None)
             if not unit:
                 unit = soldierClass()
@@ -104,6 +104,10 @@ class MyClient(ConnectionListener):
         message = input("Enter your message: ")
 
         self.sendData({"action":"message","content": message})
+
+def purge_soldiers():
+    newsoldiers = [obj for obj in allUnits if hasattr(obj, "attachedPlayer") and getattr(obj, "attachedPlayer") is not None]
+    allUnits = newsoldiers
 
 def pumping():
     connection.Pump()

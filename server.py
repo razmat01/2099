@@ -134,5 +134,5 @@ def initialize_soldier_for_player(player_number):
 
 while True:
     myserver.Pump()
-    print(allUnits)
-    pygame.time.wait(500)
+
+    pygame.time.wait(5)
