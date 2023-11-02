@@ -59,9 +59,9 @@ class MyClient(ConnectionListener):
         with allUnits_lock:  # acquire lock before modifying allUnits
             # find the soldier and update its position
             unit = next((u for u in allUnits if u.id == data["id"]), None)
-            if not unit:
-                unit = soldierClass()
-                allUnits.append(unit)
+            #if not unit:
+            #    unit = soldierClass()
+            #    allUnits.append(unit)
 
             unit.x = data["x"]
             unit.y = data["y"]

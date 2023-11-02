@@ -31,21 +31,12 @@ class forestClass(terrainClass):
         self.x = 0
         self.y = 0
 
-
-class catClass():
-        speed = 1
-        x=0
-        y=0
-
 class playerClass():
     soldiers = []
 
     address = ""
     channel = ""
     player_number = None  # New attribute to store the player number
-
-
-    
 
 class ClientChannel(Channel):
     def Network_message(self, data):
@@ -64,7 +55,6 @@ class ClientChannel(Channel):
         for i in range(len(allUnits)):
             self.Send({"action":"updateReturn","type":allUnits[i].type,"player":allUnits[i].attachedPlayer,"x":allUnits[i].x,"y":allUnits[i].y,"id":allUnits[i].id})
         
-
     def Network_requestMap(self,data):
 
         self.Send({"action":"mapReturn","content":"level.dat"})
@@ -95,7 +85,7 @@ class MyServer(Server):
         new_player = playerClass()
         new_player.player_number = self.next_player_number
         self.next_player_number += 1
-        #initialize_soldier_for_player(new_player.player_number)
+
         new_player.address = addr
         new_player.channel = channel
         players.append(new_player)
@@ -105,14 +95,11 @@ class MyServer(Server):
         sleep(0.5)
         initialize_soldier_for_player(new_player.player_number)
 
-
 def create_soldier(player_number):
     soldier = soldierClass()
     soldier.x, soldier.y = 300, 700
     soldier.attachedPlayer = player_number
     return soldier
-
-        
 
 players = []
 myserver = MyServer(localaddr=("0.0.0.0", 25565))
@@ -143,6 +130,6 @@ def initialize_soldier_for_player(player_number):
             })
 
 while True:
-    
     myserver.Pump()
-    pygame.time.wait(5)
+    print(allUnits)
+    pygame.time.wait(500)
