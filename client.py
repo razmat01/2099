@@ -14,7 +14,6 @@ def purge_soldiers():
     allUnits=[]
     #newsoldiers = [obj for obj in units if hasattr(obj, "attachedPlayer") and getattr(obj, "attachedPlayer") is not None]
 
-
 class unitClass():
     def __init__(self):
         allUnits.append(self)
@@ -30,9 +29,6 @@ class soldierClass(unitClass):
         self.attachedPlayer = None
         self.imp = SOLDIER_IMAGE
 
-
-
-cats = []
 class catClass():
     x=0
     y=0
@@ -64,8 +60,10 @@ class MyClient(ConnectionListener):
         y=data["y"]
     def Network_updateReturn(self, data):
     # Lock the allUnits list for thread-safe operation
-        gameStart = data["gameStatus"]
-        print("starting: ",gameStart)
+        try:
+            gameStart = data["gameStatus"]
+        except:pass
+        #print("starting: ",gameStart)
         
         with allUnits_lock:
             # Find the unit with the matching ID
@@ -94,7 +92,9 @@ class MyClient(ConnectionListener):
     def Network_assign_player_number(self, data):
         self.player_number = data["player_number"]
         print(f"Assigned player number: {self.player_number}")
-        print("game status = ",gameStart)
+        try:
+            print("game status = ",gameStart)
+        except:pass
         gameStart = data["gameStatus"]
         
     def Network_return(self,host): #response from pinging server

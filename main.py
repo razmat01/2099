@@ -19,39 +19,58 @@ targetImage = pygame.image.load("assets/sprites/targetplaceholder.png")
 startingImage = pygame.image.load("assets/sprites/start_game_button.png")
 zoom = 1    
 
+levelArray=[]
+ 
 
+current_selected_soldier = None
+current_unit_index = 0
 
 #levelArray = []
 running = True
+        
+def network_pumping(): ##thread for inputs and network controls
+    while True:  # Keep this running to continuously handle network operations
+        
+        myclient.Pump()
+        client.pumping()
+        #print("request update")
+        myclient.sendData({"action":"updateRequest"})
+        time.sleep(0.1)
+        
+network_thread = threading.Thread(target=network_pumping) #networking put on its own thread
+network_thread.start() #start networking thread
 
-def mouseChecks():
+while running:
+  
+    player_units = [unit for unit in client.allUnits if unit.attachedPlayer == myclient.player_number] #list of all units player owns
+
+
     for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3:  # Right mouse button
-                    if player_units:  # Check if there are any units
-                        current_unit_index = (current_unit_index + 1) % len(player_units)  # Cycle to the next index
-                        current_selected_soldier = player_units[current_unit_index] 
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 3:  # Right mouse button
+                if player_units:  # Check if there are any units
+                    current_unit_index = (current_unit_index + 1) % len(player_units)  # Cycle to the next index
+                    current_selected_soldier = player_units[current_unit_index] 
                         
-                if event.button == 1:  # Left mouse button
-                    try:
-                        if current_selected_soldier:  # Only send if a soldier is selected
+            if event.button == 1:  # Left mouse button
+                try:
+                    if current_selected_soldier:  # Only send if a soldier is selected
                             #print(current_selected_soldier)
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            tile_x = (mouse_x - mapOffset["x"]) // zoom
-                            tile_y = (mouse_y - mapOffset["y"]) // zoom
-                            myclient.sendData({
-                                "action": "move_soldier",
-                                "id": current_selected_soldier.id,
-                                "tile_x": tile_x - (tile_x%48), 
-                                "tile_y": tile_y - (tile_y%48)
-                            })
-                            current_selected_soldier.x = tile_x - (tile_x%48)
-                            current_selected_soldier.y = tile_y - (tile_y%48)
-                    except:pass
-
-def keyChecks():
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        tile_x = (mouse_x - mapOffset["x"]) // zoom
+                        tile_y = (mouse_y - mapOffset["y"]) // zoom
+                        myclient.sendData({
+                            "action": "move_soldier",
+                            "id": current_selected_soldier.id,
+                            "tile_x": tile_x - (tile_x%48), 
+                            "tile_y": tile_y - (tile_y%48)
+                        })
+                        current_selected_soldier.x = tile_x - (tile_x%48)
+                        current_selected_soldier.y = tile_y - (tile_y%48)
+                except:pass
+        
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:  # W key
             myclient.sendData({"action":"keypress","content":"W"})
@@ -75,29 +94,6 @@ def keyChecks():
             mapOffset["x"] += -3 #pan right
         if keys[pygame.K_LEFT]:
             mapOffset["x"] += 3 # pan left
-
-def network_pumping(): ##thread for inputs and network controls
-    while True:  # Keep this running to continuously handle network operations
-        
-        myclient.Pump()
-        client.pumping()
-        #print("request update")
-        myclient.sendData({"action":"updateRequest"})
-        time.sleep(0.1)
-        
-levelArray=[]
-network_thread = threading.Thread(target=network_pumping)
-network_thread.start()
-current_selected_soldier = None
-current_unit_index = 0
-
-while running:
-  
-        player_units = [unit for unit in client.allUnits if unit.attachedPlayer == myclient.player_number] #list of all units player owns
-
-        mouseChecks() #all mouse checks for selecting soldier and stuff
-        
-        keyChecks() # all key checks for movement and controls
         
         if not levelArray:
             levelArray = openlevel.openlevelfile(myclient.level)

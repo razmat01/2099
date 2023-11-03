@@ -5,9 +5,7 @@ import PodSixNet
 import pygame
 import openlevel
 
-allUnits = []
-gameStart = False
-turn = 0
+
 
 class unitClass():
     def __init__(self):
@@ -54,7 +52,7 @@ class ClientChannel(Channel):
         myserver.remove_units(self)
     def Network_updateRequest(self,data):
         i=0
-        print("update requested")
+        #print("update requested")
         
         for i in range(len(allUnits)):
             self.Send({
@@ -84,8 +82,6 @@ class ClientChannel(Channel):
                 for i in range(len(allUnits)):
                     self.Send({"action":"updateReturn","type":allUnits[i].type,"player":allUnits[i].attachedPlayer,"x":allUnits[i].x,"y":allUnits[i].y,"id":allUnits[i].id})
 
-        
-  
 class MyServer(Server):
     channelClass = ClientChannel
     def __init__(self, *args, **kwargs):
@@ -113,17 +109,23 @@ class MyServer(Server):
         players.append(new_player)
 
         # Send the unique player number to the client
-        if(len(players)==2):
+        if(len(players)==1):
             gameStart=True
         channel.Send({"action": "assign_player_number", "player_number": new_player.player_number,"gameStatus":gameStart})
-        sleep(0.5)
+
         #initialize_soldier_for_player(new_player.player_number)
 
-def gameStart():
-    for player in players:
-        initialize_soldier_for_player(player.player_number)
-        gameStart=True
-
+def gameStartFunction():
+    isGameStarting=True
+    print("game starting")
+    try:
+        initialize_soldier_for_player(0)
+    except:pass
+    try:
+        initialize_soldier_for_player(1)
+    except:pass
+    return isGameStarting
+        
 def create_soldier(player_number):
     soldier = soldierClass()
     soldier.x, soldier.y = 300, 700
@@ -138,6 +140,7 @@ level = openlevel.openlevelfile("level.dat")
 
 
 def initialize_soldier_for_player(player_number):
+    print("initialising soldiers for player ",player_number )
     player = next((p for p in players if p.player_number == player_number), None)
     if player is None:
         print(f"No player found with player number {player_number}")
@@ -158,10 +161,17 @@ def initialize_soldier_for_player(player_number):
                 "id": soldier.id
             })
 
+
+allUnits = []
+gameStart = False
+turn = 0
+
 while True:
-    if(len(players)==2):
-        gameStart=True
-    
+    if(len(players)==2 and gameStart==False):
+        gameStart = gameStartFunction()
+        print(len(players), print(gameStart))
+        print("game started")
+
     myserver.Pump()
     
     pygame.time.wait(5)
